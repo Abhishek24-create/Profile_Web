@@ -1,0 +1,89 @@
+{% extends 'MyApp/base.html' %}
+{#{% load socialapp %#}
+<!DOCTYPE html>
+
+{% block body_block %}
+<body>
+
+{% if message %}
+<div class="alert alert-danger text-center  alert-dismissible" >
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+ {{ message}}
+</div>
+{% endif %}
+
+<div class="container-fluid " id="registration_form">
+     <div class="col-sm-4 card shadow-lg p-4 mb-4 mx-auto">
+
+<form action="/saveregister/" method="post">
+            {% csrf_token %}
+
+  	 <h2 class="bg-primary text-center text-white" style="border-radius:5px">REGISTRATION</h2>
+
+    <div class="form-group">
+     <label>FIRSTNAME</label>
+      <input type="text" class="form-control" id="firstname" placeholder="Enter Firstname." name="firstname" required>
+     </div>
+
+    <div class="form-group">
+     <label>USEREMAIL:</label>
+      <input type="email" class="form-control" id="email" placeholder="Enter useremail" name="email" required>
+     </div>
+
+     <div class="form-group">
+      <label>PASSWORD:</label>
+      <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" required>
+     </div>
+
+    <button type="submit" name="login" class="btn btn-primary" >Register</button>
+    <hr class="my-4">
+    <center><p><strong>-- OR --</strong></p></center>
+{#            <div class="social-btn">#}
+{#                <center><div class="" data-onsuccess="onSignIn"></div></center>#}
+{#                  </div>#}
+
+        {% if user.is_authenticated %}
+      <p>Logged as {{ user.email}}</p>
+      <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+    {% else %}
+   <center><a class="btn btn-warning" href="{% url 'social:begin' 'google-oauth2' %}">
+        Login
+   </a></center>
+    {% endif %}
+
+
+  <div class="container-fluid">
+  {% for post in posts %}
+    <div>
+      <h2>{{ post.title }}</h2>
+      <p>{{ post.content }}</p>
+      <p>Posted by {{ post.user.username }} | {{ post.date }}</p>
+    </div>
+  {% endfor %}
+  </div>
+
+    </form>
+     </div>
+  </div>
+<script>
+    function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+}
+</script>
+<a href="#" onclick="signOut();">Sign out</a>
+<script>
+  function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
+</script>
+
+
+</body>
+{% endblock %}
